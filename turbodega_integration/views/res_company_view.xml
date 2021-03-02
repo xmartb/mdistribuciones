@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<odoo>
+    <data>
+
+        <record id="view_res_company_turbodega_integration" model="ir.ui.view">
+            <field name="name">res.company.form.turbodega_integration</field>
+            <field name="model">res.company</field>
+            <field name="inherit_id" ref="base.view_company_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page name="resourceId" string="Turbodega">
+                        <button
+                            name="obtain_resourceId"
+                            string="Obtain resourceid"
+                            type="object"
+                            icon="fa-desktop"
+                        />
+                            <group cols="4">
+                                <group>
+                                 <field name="token" />
+                                    <field
+                                    name="resourceId"
+                                    groups="base.group_system"
+                                />
+                                <field
+                                    name="turbodega_sync_date"
+                                    string="Última sincronización"
+                                    readonly="True"
+                                />
+                                </group>
+                            </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+    </data>
+
+</odoo>

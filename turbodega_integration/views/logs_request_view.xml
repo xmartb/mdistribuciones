@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+        <record id="logs_form_view" model="ir.ui.view">
+            <field name="name">logs.request.form</field>
+            <field name="model">logs.request</field>
+            <field name="arch" type="xml">
+                <form string="Logs">
+                    <header>
+
+                        <field name="stages_id" widget="statusbar" readonly="1" />
+                    </header>
+                    <sheet string="Logs">
+                        <group>
+                            <group>
+                                                    <field name="model_type" />
+                                                    <field name="endpoint" />
+
+                    <field name="type_operation" string="Method" />
+
+                                <field name="company_id" readonly="1" />
+                            </group>
+                        </group>
+
+                        <group>
+                            <group>
+                                <field name="json_in" readonly="1" />
+                            </group>
+                            <group>
+                                <field name="json_out" readonly="1" />
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="error_info" string="Error">
+                                <field name="error_details" readonly="1" />
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field
+                            name="message_follower_ids"
+                            widget="mail_followers"
+                            groups="base.group_user"
+                        />
+                        <field name="message_ids" widget="mail_thread" />
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_logs_search" model="ir.ui.view">
+          <field name="name">logs.request.search</field>
+          <field name="model">logs.request</field>
+          <field name="arch" type="xml">
+            <search string="Buscar Logs">
+
+              <field name="name" />
+
+              <filter
+                        string="Nuevo"
+                        domain="[('stages_id', '=', 'new')]"
+                        name="is_new"
+                    />
+              <filter
+                        string="Ejecutado"
+                        domain="[('stages_id', '=', 'done')]"
+                        name="is_done"
+                    />
+              <filter
+                        string="Error"
+                        domain="[('stages_id', '=', 'error')]"
+                        name="is_error"
+                    />
+
+            </search>
+          </field>
+        </record>
+
+        <record model="ir.ui.view" id="logs_tree_view">
+            <field name="name">logs.request.tree</field>
+            <field name="model">logs.request</field>
+            <field name="arch" type="xml">
+                <tree
+                    string="Logs"
+                    decoration-info="stages_id == 'new'"
+                    decoration-muted="stages_id == 'done'"
+                    decoration-danger="stages_id == 'error'"
+                    default_order="create_date desc"
+                >
+
+                    <field name="create_date" string="Creado en" />
+                    <field name="model_type" />
+                    <field name="type_operation" />
+                    <field name="json_in" />
+                    <field name="stages_id" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="ir_cron_act_logs" model="ir.actions.act_window">
+            <field name="name">Logs Request</field>
+            <field name="res_model">logs.request</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="logs_tree_view" />
+            <field name="search_view_id" ref="view_logs_search" />
+        </record>
+
+        <menuitem id="menu_ir_cron_logs" action="ir_cron_act_logs" />
+    </data>
+</odoo>

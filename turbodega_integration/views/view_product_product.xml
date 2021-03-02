@@ -1,0 +1,13 @@
+<odoo>
+    <!-- Product revision form view -->
+    <record id="product_product_form_view_turbodega" model="ir.ui.view">
+        <field name="name">product.product.form.turbodega</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='taxes_id']" position="before">
+                <field name="standard_price_tax_included" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

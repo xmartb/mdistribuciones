@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data>
+
+
+        <record id="partner_view_form_inherit_turbodega1" model="ir.ui.view">
+            <field name="name">partner.inherit.form.turbodega</field>
+             <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+
+                <div class="oe_button_box" name="button_box">
+                    <button
+                        name="sync_turbodega"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-archive"
+                        string="Turbodega"
+                        attrs="{'invisible': [('turbodega_sync', '=', False)]}"
+                    >
+                        <field
+                            name="turbodega_sync"
+                            widget="boolean_button"
+                            options='{"terminology": "archive"}'
+                            invisible="1"
+                        />
+                    </button>
+                </div>
+                     <div class="oe_button_box" name="button_box">
+                    <button
+                        name="sync_turbodega"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-refresh"
+                        string="Turbodega"
+                        attrs="{'invisible': [('turbodega_sync', '=', True)]}"
+                    >
+                        <field
+                            name="turbodega_sync"
+                            widget="boolean_button"
+                            options='{" terminology": "archive"}'
+                            invisible="1"
+                        />
+                    </button>
+                </div>
+
+                    <xpath expr="//field[@name='category_id']" position="after">
+                        <field
+                        name="turbodega_type_entity"
+                        string="Tipo Turbodega"
+                        required="1"
+                    />
+                    </xpath>
+            <field name="country_id" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Turbodega log">
+                    <group>
+                        <field
+                                name="turbodega_sync"
+                                string="¿Está Sincronizado?"
+                                readonly="True"
+                            />
+                        <field
+                                name="turbodega_creation"
+                                string="¿Está creado?"
+                                readonly="True"
+                            />
+                        <field
+                                name="turbodega_sync_date"
+                                string="Fecha de sincronización"
+                                readonly="True"
+                            />
+                    </group>
+                </page>
+            </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

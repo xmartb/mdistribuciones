@@ -1,0 +1,84 @@
+<odoo>
+        <data>
+        <record
+            id="turbodega_product_template"
+            forcecreate='True'
+            model="base.automation"
+        >
+            <field name="name">Turbodega product template</field>
+            <field name="model_id" ref="model_product_template" />
+            <field name="state">code</field>
+            <field
+                name="trigger_field_ids"
+                eval="
+            [(6,0,[
+            ref('product.field_product_template__default_code'),
+            ref('product.field_product_template__uom_id'),
+            ref('product.field_product_template__name'),
+            ref('product.field_product_template__description'),
+            ref('product_brand.field_product_template__product_brand_id'),
+            ref('product.field_product_template__list_price'),
+            ref('turbodega_integration.field_product_template__turbodega_type_entity'),
+            ref('product.field_product_template__weight'),
+            ref('product.field_product_template__currency_id'),
+            ref('account.field_product_template__taxes_id'),
+            ref('product.field_product_template__seller_ids'),
+            ])]"
+            />
+            <field name="code">
+env['sync.api'].sync_turbodega(record.id, 'product.template')
+        </field>
+            <field name="trigger">on_create_or_write</field>
+            <field name="active" eval="True" />
+        </record>
+        <record id="turbodega_stock_picking" forcecreate='True' model="base.automation">
+            <field name="name">Turbodega stock picking</field>
+            <field name="model_id" ref="stock.model_stock_picking" />
+            <field name="state">code</field>
+            <field name="code">
+env['sync.api'].sync_stockpicking(int(env.context['active_id']))
+            </field>
+            <field
+                name="trigger_field_ids"
+                eval="
+        [(6,0,[
+        ref('stock.field_stock_picking__state'),
+        ])]"
+            />
+            <field name="trigger">on_create_or_write</field>
+            <field name="active" eval="True" />
+        </record>
+
+        <record id="turbodega_res_partner" forcecreate='True' model="base.automation">
+            <field name="name">Turbodega Partner</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="state">code</field>
+            <field
+                name="trigger_field_ids"
+                eval="
+            [(6,0,[
+            ref('base_address_extended.field_res_partner__street_name'),
+            ref('base.field_res_partner__country_id'),
+            ref('base.field_res_partner__partner_latitude'),
+            ref('base.field_res_partner__partner_longitude'),
+            ref('base.field_res_partner__state_id'),
+            ref('base.field_res_partner__zip'),
+            ref('base.field_res_partner__name'),
+            ref('base.field_res_partner__mobile'),
+            ref('base.field_res_partner__industry_id'),
+            ref('base.field_res_partner__comment'),
+            ref('base.field_res_partner__vat'),
+            ref('turbodega_integration.field_res_partner__turbodega_type_entity'),
+            ref('l10n_latam_base.field_res_partner__l10n_latam_identification_type_id'),
+            ])]"
+            />
+            <field name="code">
+            env['sync.api'].sync_turbodega(int(env.context['active_id']), 'res.partner')
+        </field>
+            <field name="trigger">on_create_or_write</field>
+            <field name="active" eval="True" />
+        </record>
+
+
+    </data>
+</odoo>
