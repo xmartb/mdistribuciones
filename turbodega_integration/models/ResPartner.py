@@ -1,6 +1,10 @@
+import logging
+
 from odoo import fields, models
 
 from .TbConexion import api_send_partner, api_update_partner
+
+_logger = logging.getLogger(__name__)
 
 
 class ResPartner(models.Model):
@@ -20,21 +24,30 @@ class ResPartner(models.Model):
         default="",
         track_visibility="always",
     )
+    last_json = fields.Char(string="json")
+
+    def update_related(self):
+        _logger.warning("related")
 
     def api_send(self, tb_data):
-        return api_send_partner(tb_data, self.env.company.token)
+        return api_send_partner(
+            tb_data, self.env.company.token, self.company_id.partner_url
+        )
 
     def api_update_product(self, tb_data):
-        return api_update_partner(tb_data, self.env.company.token)
+        return api_update_partner(
+            tb_data, self.env.company.token, self.company_id.partner_url
+        )
 
     def to_json_turbodega(self):
         partner_1 = self.env["res.partner"].browse(self.id)
         tb_geocoord = [partner_1.partner_latitude, partner_1.partner_longitude]
+
         tb_address = {
-            "street1": partner_1.street_name,
+            "street1": partner_1.street,
             "town": partner_1.state_id.name or "",
             "postalCode": partner_1.zip or "",
-            "adminDivision": False,
+            "adminDivision": partner_1.city_id.name or partner_1.city,
             "countryCode": partner_1.country_id.code,
             "geocoord": tb_geocoord,
         }

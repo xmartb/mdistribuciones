@@ -10,6 +10,9 @@ class LogsRequest(models.Model):
     model_type = fields.Char(string="model", track_visibility="always")
     type_operation = fields.Char(string="type_operation", track_visibility="always")
     fechaOperacion = fields.Char(string="fechaOperacion", track_visibility="always")
+    fechaActualizacion = fields.Datetime(
+        string="fechaOperacion", track_visibility="always"
+    )
     json_in = fields.Text(string="Json IN", track_visibility="always")
     json_out = fields.Text(string="Json OUT", track_visibility="always")
     error_details = fields.Char(string="Error details", track_visibility="always")

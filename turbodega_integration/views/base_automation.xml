@@ -31,6 +31,7 @@ env['sync.api'].sync_turbodega(record.id, 'product.template')
             <field name="trigger">on_create_or_write</field>
             <field name="active" eval="True" />
         </record>
+
         <record id="turbodega_stock_picking" forcecreate='True' model="base.automation">
             <field name="name">Turbodega stock picking</field>
             <field name="model_id" ref="stock.model_stock_picking" />
@@ -49,6 +50,18 @@ env['sync.api'].sync_stockpicking(int(env.context['active_id']))
             <field name="active" eval="True" />
         </record>
 
+
+        <record id="turbodega_mrp_bom" forcecreate='True' model="base.automation">
+            <field name="name">Turbodega mrp bom</field>
+            <field name="model_id" ref="mrp.model_mrp_bom" />
+            <field name="state">code</field>
+            <field name="code">
+env['sync.api'].sync_mrp_bom(int(env.context['active_id']))
+            </field>
+            <field name="trigger">on_create_or_write</field>
+            <field name="active" eval="True" />
+        </record>
+
         <record id="turbodega_res_partner" forcecreate='True' model="base.automation">
             <field name="name">Turbodega Partner</field>
             <field name="model_id" ref="model_res_partner" />
@@ -58,6 +71,10 @@ env['sync.api'].sync_stockpicking(int(env.context['active_id']))
                 eval="
             [(6,0,[
             ref('base_address_extended.field_res_partner__street_name'),
+            ref('base_address_extended.field_res_partner__street_number'),
+            ref('base_address_extended.field_res_partner__street_number2'),
+            ref('base_address_city.field_res_partner__city_id'),
+            ref('base.field_res_partner__street2'),
             ref('base.field_res_partner__country_id'),
             ref('base.field_res_partner__partner_latitude'),
             ref('base.field_res_partner__partner_longitude'),
@@ -73,7 +90,7 @@ env['sync.api'].sync_stockpicking(int(env.context['active_id']))
             ])]"
             />
             <field name="code">
-            env['sync.api'].sync_turbodega(int(env.context['active_id']), 'res.partner')
+env['sync.api'].sync_turbodega(record.id, 'res.partner')
         </field>
             <field name="trigger">on_create_or_write</field>
             <field name="active" eval="True" />

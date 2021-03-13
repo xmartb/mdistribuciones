@@ -1,6 +1,6 @@
 {
     "name": "TURBODEGA - REST API CLIENT -TEST",
-    "version": "14.0.1.1.0",
+    "version": "14.0.0.0.1",
     "author": "Tecnativa",
     "authors": ["Erick Delgado"],
     "category": "Tools",
@@ -25,6 +25,7 @@
         "l10n_latam_base",
         "l10n_latam_invoice_document",
         "l10n_pe",
+        "mrp",
     ],
     "data": [
         "security/ir.model.access.csv",

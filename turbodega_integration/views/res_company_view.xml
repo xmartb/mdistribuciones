@@ -17,6 +17,10 @@
                         />
                             <group cols="4">
                                 <group>
+
+                                 <field name="product_url" />
+                                 <field name="partner_url" />
+                                 <field name="resourceId_url" />
                                  <field name="token" />
                                     <field
                                     name="resourceId"
@@ -27,6 +31,7 @@
                                     string="Última sincronización"
                                     readonly="True"
                                 />
+                                <field name="default_location" />
                                 </group>
                             </group>
                     </page>

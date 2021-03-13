@@ -25,14 +25,44 @@ class ProductTemplate(models.Model):
     )
 
     resultado = fields.Text(string="Result", readonly="True")
+    last_json = fields.Char(string="json")
 
     def api_send(self, tb_data):
-        return api_send_product(tb_data, self.company_id.token)
+        if not self.company_id:
+            raise UserError(_("Company no selected."))
+        return api_send_product(
+            tb_data, self.company_id.token, self.company_id.product_url
+        )
 
     def api_update_product(self, tb_data):
-        return api_update_product(tb_data, self.company_id.token)
+        if not self.company_id:
+            raise UserError(_("Company no selected."))
+        return api_update_product(
+            tb_data, self.company_id.token, self.company_id.product_url
+        )
+
+    def update_related(self):
+        producto_product_1 = self.env["product.product"].search(
+            [("product_tmpl_id", "=", self.id)]
+        )
+        _logger.error(producto_product_1)
+        for product_product in producto_product_1:
+            mrp_bom_line_1 = self.env["mrp.bom.line"].search(
+                [("product_id", "=", product_product.id)]
+            )
+            _logger.error(mrp_bom_line_1)
+            for mrp_bom_line in mrp_bom_line_1:
+                mrp_bom_1 = self.env["mrp.bom"].browse(mrp_bom_line.bom_id.id)
+                _logger.error(mrp_bom_1)
+                self.env["sync.api"].sync_update(
+                    id_product=mrp_bom_1.product_tmpl_id.id, model="product.template"
+                )
+                # self.env["sync.api"].sync_turbodega(
+                #     mrp_bom_1.product_tmpl_id.id, "product.template"
+                # )
 
     def to_json_turbodega(self):
+        stock_level = 0
         producto_1 = self.env["product.template"].browse(self.id)
         producto_product_1 = self.env["product.product"].search(
             [("product_tmpl_id", "=", self.id)]
@@ -53,18 +83,25 @@ class ProductTemplate(models.Model):
                 }
                 prices_lines.append(tb_prices)
         tb_data = {}
-        # stock_level = "-"
-        # if producto_1.type == "product":
         tax = False
         if producto_1.taxes_id:
             tax = producto_1.taxes_id[0].id
         manufacturer = False
         if producto_1.seller_ids:
             manufacturer = producto_1.seller_ids[0].name.name
-        stock_level = producto_1.virtual_available
+        stock_warehouse_1 = self.env["stock.warehouse"].search(
+            [("company_id", "=", producto_1.company_id.id)]
+        )
+        for warehouse in stock_warehouse_1:
+            producto_product_1.with_context(
+                warehouse=warehouse.id
+            )._compute_quantities()
+            stock_level += producto_product_1.with_context(
+                warehouse=warehouse.id
+            ).virtual_available
+        _logger.warning(producto_product_1.virtual_available)
         tb_data = {
             "resourceId": self.company_id.resourceId,
-            # "distributorSKU": str(producto_1.id).zfill(5),
             "distributorSKU": str(producto_product_1.id).zfill(5),
             "distributorProductId": producto_1.default_code,
             "openerp_product_uom": producto_1.uom_id.id,
@@ -73,7 +110,6 @@ class ProductTemplate(models.Model):
             "description": producto_1.description or "",
             "manufacturer": manufacturer or "",
             "brand": producto_1.product_brand_id.name or "",
-            # "stockLevel": producto_1.qty_available,
             "stockLevel": stock_level,
             "price": producto_product_1.standard_price_tax_included,
             "prices": prices_lines or False,

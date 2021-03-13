@@ -50,11 +50,14 @@
                         string="Tipo Turbodega"
                         required="1"
                     />
+                    <field name="company_id" />
                     </xpath>
             <field name="country_id" position="attributes">
                 <attribute name="required">1</attribute>
             </field>
-
+            <field name="company_id" position="attributes">
+                <attribute name="required">1</attribute>
+            </field>
             <xpath expr="//notebook" position="inside">
                 <page string="Turbodega log">
                     <group>
@@ -73,6 +76,7 @@
                                 string="Fecha de sincronización"
                                 readonly="True"
                             />
+
                     </group>
                 </page>
             </xpath>
